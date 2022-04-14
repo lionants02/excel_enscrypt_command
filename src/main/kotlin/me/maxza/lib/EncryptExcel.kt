@@ -1,7 +1,3 @@
-import me.maxza.lib.EncryptExcel
-import me.maxza.lib.EncryptXlsx
-import java.io.File
-
 /*
  * MIT License
  *
@@ -27,15 +23,10 @@ import java.io.File
  *
  */
 
+package me.maxza.lib
 
-fun main(args: Array<String>) {
-    println("Hello World!")
+import java.io.File
 
-    // Try adding program arguments via Run/Debug configuration.
-    // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    println("Program arguments: ${args.joinToString()}")
-    val enc: EncryptExcel = EncryptXlsx()
-    val file = File(args[0])
-    require(file.isFile) { "Cannot file" }
-    enc.encrypt(file, args[1])
+interface EncryptExcel {
+    fun encrypt(file: File, password: String)
 }
