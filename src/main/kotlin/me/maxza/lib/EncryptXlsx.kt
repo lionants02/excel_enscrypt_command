@@ -1,7 +1,3 @@
-import me.maxza.lib.EncryptExcel
-import me.maxza.lib.EncryptXlsx
-import java.io.File
-
 /*
  * MIT License
  *
@@ -27,15 +23,27 @@ import java.io.File
  *
  */
 
+package me.maxza.lib
 
-fun main(args: Array<String>) {
-    println("Hello World!")
+import org.apache.poi.openxml4j.opc.OPCPackage
+import org.apache.poi.openxml4j.opc.PackageAccess
+import org.apache.poi.poifs.crypt.EncryptionInfo
+import org.apache.poi.poifs.crypt.EncryptionMode
+import org.apache.poi.poifs.filesystem.POIFSFileSystem
+import java.io.File
+import java.io.FileOutputStream
 
-    // Try adding program arguments via Run/Debug configuration.
-    // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    println("Program arguments: ${args.joinToString()}")
-    val enc: EncryptExcel = EncryptXlsx()
-    val file = File(args[0])
-    require(file.isFile) { "Cannot file" }
-    enc.encrypt(file, args[1])
+
+class EncryptXlsx:EncryptExcel {
+    override fun encrypt(file: File, password: String) {
+        POIFSFileSystem().use { fs ->
+            val info = EncryptionInfo(EncryptionMode.agile)
+            val encryptor = info.encryptor
+            encryptor.confirmPassword(password)
+            OPCPackage.open(file, PackageAccess.READ_WRITE).use { opc ->
+                encryptor.getDataStream(fs).use { os -> opc.save(os) }
+            }
+            FileOutputStream(file).use { fos -> fs.writeFilesystem(fos) }
+        }
+    }
 }
