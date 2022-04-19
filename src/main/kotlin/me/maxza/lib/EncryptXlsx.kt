@@ -36,13 +36,13 @@ import java.io.FileOutputStream
 class EncryptXlsx : EncryptExcel {
     override fun encrypt(file: File, password: String) {
         POIFSFileSystem().use { fs ->
-            val aes256 = CipherAlgorithm.aes256
+            val cipher = CipherAlgorithm.aes256
             val info = EncryptionInfo(
                 EncryptionMode.agile,
-                aes256,
-                HashAlgorithm.sha256,
-                aes256.defaultKeySize,
-                aes256.blockSize,
+                cipher,
+                HashAlgorithm.sha512,
+                cipher.defaultKeySize,
+                cipher.blockSize,
                 ChainingMode.cbc
             )
             val encryptor = info.encryptor
