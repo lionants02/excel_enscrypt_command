@@ -1,5 +1,7 @@
 # excel_enscrypt_command
 
+excel (xlsx) with password and encrypt data by AES256
+
 Example windows
 
 ```shell
