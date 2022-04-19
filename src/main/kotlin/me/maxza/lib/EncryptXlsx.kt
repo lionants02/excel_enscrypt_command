@@ -27,17 +27,24 @@ package me.maxza.lib
 
 import org.apache.poi.openxml4j.opc.OPCPackage
 import org.apache.poi.openxml4j.opc.PackageAccess
-import org.apache.poi.poifs.crypt.EncryptionInfo
-import org.apache.poi.poifs.crypt.EncryptionMode
+import org.apache.poi.poifs.crypt.*
 import org.apache.poi.poifs.filesystem.POIFSFileSystem
 import java.io.File
 import java.io.FileOutputStream
 
 
-class EncryptXlsx:EncryptExcel {
+class EncryptXlsx : EncryptExcel {
     override fun encrypt(file: File, password: String) {
         POIFSFileSystem().use { fs ->
-            val info = EncryptionInfo(EncryptionMode.agile)
+            val aes256 = CipherAlgorithm.aes256
+            val info = EncryptionInfo(
+                EncryptionMode.agile,
+                aes256,
+                HashAlgorithm.sha256,
+                aes256.defaultKeySize,
+                aes256.blockSize,
+                ChainingMode.cbc
+            )
             val encryptor = info.encryptor
             encryptor.confirmPassword(password)
             OPCPackage.open(file, PackageAccess.READ_WRITE).use { opc ->
